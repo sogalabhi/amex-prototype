@@ -1,0 +1,39 @@
+{
+  "case_id": "CASE_A",
+  "transaction": {
+    "txn_id": "AX-8842-01193",
+    "amount": 428.00,
+    "currency": "AUD",
+    "date": "2026-06-14",
+    "merchant": "NorthGate Audio Pty Ltd",
+    "descriptor": "NORTHGATE AUDIO*ONLINE",
+    "channel": "card_not_present",
+    "shipping_address_on_order": "14 Marlowe Street, Apt 3B, Carlton VIC 3053"
+  },
+  "cardmember_claim": {
+    "filed_date": "2026-07-02",
+    "text": "I ordered a pair of headphones on 14 June and they never turned up. I waited three weeks. I contacted the seller twice through their website contact form and got one reply saying it was delivered, but nothing has arrived at my apartment. I've checked with the building manager and there's no parcel. I want this charge reversed."
+  },
+  "merchant_evidence": [
+    {
+      "doc_id": "M-A-01",
+      "type": "order_receipt",
+      "content": "NORTHGATE AUDIO - TAX INVOICE #NG-33418\nDate: 14/06/2026\nItem: Sennett HX-400 Over-Ear Headphones x1\nSubtotal 389.09  GST 38.91  TOTAL AUD 428.00\nShip to: 14 Marlowe Street, Apt 3B, Carlton VIC 3053\nPayment: AMEX ending 1006 - APPROVED"
+    },
+    {
+      "doc_id": "M-A-02",
+      "type": "delivery_confirmation",
+      "content": "AusParcel Track & Trace\nConsignment: APX449120817AU\nStatus: DELIVERED\nDelivered: 18/06/2026 11:42\nDelivered to: 41 Marlowe Street, Carlton VIC 3053\nLeft in a safe place: front porch\nSignature captured: NO"
+    },
+    {
+      "doc_id": "M-A-03",
+      "type": "chat_log",
+      "content": "[26/06 09:14] Customer: Order NG-33418 hasn't arrived, it's been over a week.\n[26/06 15:02] Support: Hi, our records show this was delivered on 18 June. Please check with neighbours or your building.\n[29/06 08:31] Customer: There is nothing here. Can you send the tracking?\n[No further merchant response]"
+    }
+  ],
+  "ground_truth": {
+    "reason_code": "4554",
+    "expected_outcome": "CARDMEMBER",
+    "why": "Delivery address (41 Marlowe St) does not match the order's specified address (14 Marlowe St, Apt 3B). No signature captured. Merchant's defence under 4554 requires proof of delivery to the address specified by the Card Member."
+  }
+}

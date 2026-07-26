@@ -1,0 +1,44 @@
+{
+  "case_id": "CASE_B",
+  "transaction": {
+    "txn_id": "AX-8842-02671",
+    "amount": 1249.00,
+    "currency": "AUD",
+    "date": "2026-05-29",
+    "merchant": "Halden Outdoor Supply",
+    "descriptor": "HALDEN OUTDOOR*SYD",
+    "channel": "card_not_present",
+    "shipping_address_on_order": "7 Corbett Lane, Newtown NSW 2042"
+  },
+  "cardmember_claim": {
+    "filed_date": "2026-07-08",
+    "text": "Charge of $1249 for camping equipment that I never received. Please reverse this charge."
+  },
+  "merchant_evidence": [
+    {
+      "doc_id": "M-B-01",
+      "type": "order_receipt",
+      "content": "HALDEN OUTDOOR SUPPLY - INVOICE HOS-77210\nDate: 29/05/2026\nItems: Ridgeline 4P Tent x1, Thermal Sleep System x2\nTOTAL AUD 1,249.00\nShip to: 7 Corbett Lane, Newtown NSW 2042\nCustomer account: j.brennan@-- (registered 2023, 11 prior orders)"
+    },
+    {
+      "doc_id": "M-B-02",
+      "type": "delivery_confirmation",
+      "content": "Sterling Courier - Proof of Delivery\nConsignment: STC-9920174\nStatus: DELIVERED\nDelivered: 03/06/2026 14:20\nDelivered to: 7 Corbett Lane, Newtown NSW 2042\nSignature captured: YES - signed 'J BRENNAN'\nPhoto on delivery: attached (POD-9920174.jpg)"
+    },
+    {
+      "doc_id": "M-B-03",
+      "type": "chat_log",
+      "content": "[03/06 16:48] Customer: Tent arrived today, thanks. One of the sleeping bags is a different colour than pictured though.\n[04/06 09:10] Support: Glad it arrived. Happy to exchange the sleeping bag - returns are open 30 days per our policy.\n[04/06 09:55] Customer: I'll think about it.\n[No return initiated]"
+    },
+    {
+      "doc_id": "M-B-04",
+      "type": "policy",
+      "content": "HALDEN RETURNS POLICY (shown at checkout): Items may be returned within 30 days of delivery in original condition for exchange or refund. Colour variation on textiles is noted on each product page."
+    }
+  ],
+  "ground_truth": {
+    "reason_code": "4554",
+    "expected_outcome": "MERCHANT",
+    "why": "Signed proof of delivery to the exact specified address, plus cardmember acknowledgement of receipt in the chat log. Merchant satisfies the 4554 defence; the colour complaint was never escalated to a return within policy."
+  }
+}

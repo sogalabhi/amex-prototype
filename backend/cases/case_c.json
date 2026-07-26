@@ -1,0 +1,43 @@
+{
+  "case_id": "CASE_C",
+  "transaction": {
+    "txn_id": "AX-8842-04408",
+    "amount": 690.00,
+    "currency": "AUD",
+    "date": "2026-06-21",
+    "merchant": "Verano Furniture Co",
+    "descriptor": "VERANO FURN*ONLINE",
+    "channel": "card_not_present"
+  },
+  "cardmember_claim": {
+    "filed_date": "2026-07-11",
+    "text": "The dining chairs I received are not what was advertised. The listing said solid oak frame with a walnut finish. What arrived is much lighter in colour and one chair has a visible seam in the backrest that isn't in any of the product photos. I emailed photos to the seller and they said it's 'natural timber variation'. It isn't what I paid for."
+  },
+  "merchant_evidence": [
+    {
+      "doc_id": "M-C-01",
+      "type": "order_receipt",
+      "content": "VERANO FURNITURE - ORDER VF-51902\nDate: 21/06/2026\nItem: Aldrin Dining Chair, Walnut - set of 2\nTOTAL AUD 690.00  |  Delivered 02/07/2026, signature obtained"
+    },
+    {
+      "doc_id": "M-C-02",
+      "type": "product_description",
+      "content": "ALDRIN DINING CHAIR - Solid oak frame, walnut stain finish. Handcrafted. Please note: as each chair is made from natural timber, grain, tone and joinery detail will vary between pieces. Images are indicative."
+    },
+    {
+      "doc_id": "M-C-03",
+      "type": "merchant_photos",
+      "content": "Two images supplied by merchant of the dispatched chairs prior to shipping. Frames appear walnut-toned; a joinery seam is visible on the backrest of one chair in image VF-51902-b.jpg."
+    },
+    {
+      "doc_id": "M-C-04",
+      "type": "chat_log",
+      "content": "[05/07 11:22] Customer: These don't match the listing photos, attaching pictures.\n[06/07 10:04] Support: Thanks for the photos. This is within our stated natural timber variation. We can offer a 15% credit or a return under our 14-day policy.\n[06/07 12:40] Customer: 15% doesn't cover it. I want a full refund.\n[07/07 09:15] Support: A return is available until 16 July for a full refund minus return freight.\n[No return initiated; dispute filed 11/07]"
+    }
+  ],
+  "ground_truth": {
+    "reason_code": "4553",
+    "expected_outcome": "ESCALATE_HUMAN_REVIEW",
+    "why": "Merchant disclosed timber variation and offered remedy within policy (both 4553 defences), but the cardmember's seam complaint is a specific defect claim the disclosure may not cover. Evidence quality is comparable on both sides; confidence falls below threshold."
+  }
+}

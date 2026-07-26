@@ -1,0 +1,252 @@
+{
+  "meta": {
+    "source": "American Express Chargeback Codes - Australian Merchant Guide",
+    "market": "AU",
+    "note": "Conditions and rulebook text come from Amex. Numeric weights are our calibration, not Amex-published.",
+    "confidence_threshold": 0.50
+  },
+  "4554": {
+    "title": "Goods and Services Not Received",
+    "chargeback_reason": "Card Member did not receive, or only partially received, goods and/or services.",
+    "dispute_window_days": 120,
+    "dispute_window_note": "120 days from processing, or from the date the Card Member expected the goods or became aware they would not be provided, not exceeding 540 days.",
+    "merchant_response_days": 20,
+    "excluded_transactions": [
+      "Transactions that could be charged back under Reason Code 4513 - Credit Not Presented"
+    ],
+    "merchant_defenses": [
+      {
+        "id": "4554-D1",
+        "requires_fact": "goods_received_in_entirety",
+        "weight": -0.95,
+        "rulebook_text": "Proof that the goods or services were received in their entirety by the Card Member or the Card Member's designated representative."
+      },
+      {
+        "id": "4554-D2",
+        "requires_fact": "delivered_to_cardmember_specified_address",
+        "weight": -0.90,
+        "rulebook_text": "Proof that the goods and or services were delivered to the address specified by the Card Member."
+      },
+      {
+        "id": "4554-D3",
+        "requires_fact": "offsetting_credit_processed",
+        "weight": -1.00,
+        "rulebook_text": "Proof that a correcting Transaction, which directly offsets the disputed Transaction, has already been processed."
+      },
+      {
+        "id": "4554-D4",
+        "requires_fact": "goods_returned_claim_refuted",
+        "weight": -0.60,
+        "rulebook_text": "Proof that refutes the Card Member's claim that the goods were returned, or services were cancelled."
+      },
+      {
+        "id": "4554-D5",
+        "requires_fact": "link_between_recipient_and_cardmember",
+        "weight": -0.70,
+        "rulebook_text": "Evidence to prove that there is a link between the person who received the goods or services and the Card Member (e.g., photographs, emails)."
+      },
+      {
+        "id": "4554-D6",
+        "requires_fact": "goods_held_or_seized_by_customs",
+        "weight": -0.75,
+        "rulebook_text": "Proof that goods are held by Customs authorities in the destination country and the Card Member has failed to claim them."
+      }
+    ],
+    "cardmember_conditions": [
+      {
+        "id": "4554-C1",
+        "condition": "no_merchant_evidence_within_response_window",
+        "weight": 1.00,
+        "rationale": "Merchant did not challenge within the 20-day window; no defence submitted."
+      },
+      {
+        "id": "4554-C2",
+        "condition": "delivery_address_mismatch",
+        "weight": 0.90,
+        "rationale": "Delivery confirmation address does not match the address specified by the Card Member, defeating 4554-D2."
+      },
+      {
+        "id": "4554-C3",
+        "condition": "no_signature_and_no_recipient_link",
+        "weight": 0.45,
+        "rationale": "No signature captured and no evidence linking any recipient to the Card Member."
+      },
+      {
+        "id": "4554-C4",
+        "condition": "delivery_status_absent_or_in_transit",
+        "weight": 0.70,
+        "rationale": "No delivery scan or tracking shows goods never delivered."
+      },
+      {
+        "id": "4554-C5",
+        "condition": "partial_delivery_only",
+        "weight": 0.55,
+        "rationale": "Reason code explicitly covers partial receipt."
+      }
+    ],
+    "defeaters": [
+      {
+        "defeats": "4554-D2",
+        "when": "delivery_address_mismatch",
+        "note": "If the delivery address does not match the specified address, D2 cannot apply - suppress its weight entirely."
+      }
+    ]
+  },
+  "4553": {
+    "title": "Not As Described Or Defective Merchandise",
+    "chargeback_reason": "Card Member received goods or services different from the written description provided at the time of purchase, or received damaged or defective goods or services.",
+    "dispute_window_days": 120,
+    "merchant_response_days": 20,
+    "excluded_transactions": [],
+    "merchant_defenses": [
+      {
+        "id": "4553-D1",
+        "requires_fact": "description_match_refutes_claim",
+        "weight": -0.75,
+        "rulebook_text": "Proof that refutes the Card Member's claim that the quality of the goods or services provided did not match the written description provided by the Merchant at the time of purchase."
+      },
+      {
+        "id": "4553-D2",
+        "requires_fact": "repair_or_replacement_attempted",
+        "weight": -0.55,
+        "rulebook_text": "Proof that the Merchant attempted to repair or replace the damaged or defective goods or provide replacement services."
+      },
+      {
+        "id": "4553-D3",
+        "requires_fact": "return_policy_disclosed_and_not_followed",
+        "weight": -0.65,
+        "rulebook_text": "Proof that the Merchant provided its cancellation / return policy to the Card Member at the time of the purchase, and the Card Member did not comply with the policy."
+      },
+      {
+        "id": "4553-D4",
+        "requires_fact": "goods_accepted_as_is",
+        "weight": -0.85,
+        "rulebook_text": "Proof that the Card Member agreed to accept the goods or services 'as is'."
+      },
+      {
+        "id": "4553-D5",
+        "requires_fact": "compelling_evidence_description_matched",
+        "weight": -0.60,
+        "rulebook_text": "Compelling Evidence: proof that the goods and or services matched the description provided by the Merchant, e.g. photographs or e-mails."
+      },
+      {
+        "id": "4553-D6",
+        "requires_fact": "offsetting_credit_processed",
+        "weight": -1.00,
+        "rulebook_text": "Proof that a correcting Transaction, which directly offsets the disputed Transaction, has already been processed."
+      }
+    ],
+    "cardmember_conditions": [
+      {
+        "id": "4553-C1",
+        "condition": "no_merchant_evidence_within_response_window",
+        "weight": 1.00
+      },
+      {
+        "id": "4553-C2",
+        "condition": "specific_defect_not_covered_by_disclosure",
+        "weight": 0.70,
+        "rationale": "A concrete physical defect claim that a general variation disclaimer does not address."
+      },
+      {
+        "id": "4553-C3",
+        "condition": "material_attribute_mismatch_vs_written_description",
+        "weight": 0.80,
+        "rationale": "Delivered item differs from the written description on a stated attribute."
+      },
+      {
+        "id": "4553-C4",
+        "condition": "remedy_offered_but_materially_inadequate",
+        "weight": 0.35,
+        "rationale": "Partial remedy offered; weighs mildly for the Card Member but does not decide."
+      }
+    ],
+    "defeaters": [
+      {
+        "defeats": "4553-D1",
+        "when": "specific_defect_not_covered_by_disclosure",
+        "note": "A general variation disclosure cannot refute a specific physical defect claim."
+      },
+      {
+        "defeats": "4553-D5",
+        "when": "specific_defect_not_covered_by_disclosure",
+        "note": "Photographs showing general description match do not address an alleged specific defect."
+      }
+    ]
+  },
+  "4512": {
+    "title": "Multiple Processing",
+    "chargeback_reason": "A single Transaction for the same amount was sent for payment multiple times.",
+    "dispute_window_days": 120,
+    "merchant_response_days": 20,
+    "excluded_transactions": [
+      "Airline cases involving voided tickets pending Credit that were reissued for a different itinerary",
+      "Airline tickets with different ticket numbers"
+    ],
+    "merchant_defenses": [
+      {
+        "id": "4512-D1",
+        "requires_fact": "offsetting_credit_processed",
+        "weight": -1.00,
+        "rulebook_text": "Proof that a correcting Transaction, which directly offsets the disputed Transaction, has already been processed."
+      },
+      {
+        "id": "4512-D2",
+        "requires_fact": "each_charge_linked_and_valid",
+        "weight": -0.90,
+        "rulebook_text": "Proof that links the Card Member to each Charge processed and proves that all of the Transactions are valid."
+      }
+    ],
+    "cardmember_conditions": [
+      {
+        "id": "4512-C1",
+        "condition": "duplicate_amount_merchant_and_date_window",
+        "weight": 0.95,
+        "rationale": "Identical amount and merchant within a short window with no distinguishing order reference."
+      },
+      {
+        "id": "4512-C2",
+        "condition": "no_merchant_evidence_within_response_window",
+        "weight": 1.00
+      }
+    ],
+    "defeaters": []
+  },
+  "4544": {
+    "title": "Cancellation Of Recurring Goods / Services",
+    "chargeback_reason": "Card Member's account continues to be Charged even though the Card Member notified the Merchant to cancel or revoke consent to the recurring billing arrangement.",
+    "dispute_window_days": 120,
+    "merchant_response_days": 20,
+    "excluded_transactions": [
+      "Any Transactions other than Recurring Billing Charges for goods or services, including Deferred Billing Charges",
+      "Card Present Transactions"
+    ],
+    "merchant_defenses": [
+      {
+        "id": "4544-D1",
+        "requires_fact": "offsetting_credit_processed",
+        "weight": -1.00,
+        "rulebook_text": "Proof that a correcting Transaction, which directly offsets the disputed Transaction, has already been processed."
+      },
+      {
+        "id": "4544-D2",
+        "requires_fact": "chargeback_raised_in_error",
+        "weight": -0.80,
+        "rulebook_text": "Evidence that this Chargeback was raised in error and the disputed Transaction does not qualify under this Chargeback reason."
+      }
+    ],
+    "cardmember_conditions": [
+      {
+        "id": "4544-C1",
+        "condition": "cancellation_notice_precedes_billing_date",
+        "weight": 0.90
+      },
+      {
+        "id": "4544-C2",
+        "condition": "no_merchant_evidence_within_response_window",
+        "weight": 1.00
+      }
+    ],
+    "defeaters": []
+  }
+}
