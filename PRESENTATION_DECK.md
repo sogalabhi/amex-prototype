@@ -100,26 +100,41 @@ flowchart LR
 ### **Four layers, all production-proven components**
 
 ```mermaid
-flowchart TB
-    U["Card Member & Merchant Portals<br/>(React SPA + SSE Real-Time Stream)"]
-    ORCH["API Gateway + Dispute Orchestrator<br/>(FastAPI Backend)"]
-    AI["AI Perception Layer (OFF-CHAIN)<br/>OpenRouter API (openai/gpt-4o-mini)"]
-    DET["Deterministic Engine Layer<br/>Python Rules Engine (rules/amex_reason_codes.json)"]
-    EVM["Trust & Commitment Layer<br/>EVM Ledger (Anvil RPC port 8545)"]
+flowchart TD
+    subgraph INGEST ["1. Evidence Ingestion"]
+        E1["Cardmember Claim & Merchant Evidence<br/>(Receipts, Courier Tracking, Chat Logs)"]
+    end
 
-    U --> ORCH
-    ORCH --> AI
-    AI --> DET
-    DET --> EVM
+    subgraph PERCEPTION ["2. AI Perception (OFF-CHAIN)"]
+        AI1["OpenRouter LLM (openai/gpt-4o-mini)<br/>Classifies Reason Code & Extracts Atomic Facts"]
+    end
 
-    classDef ui fill:#eef0f3,stroke:#5b6470,color:#111;
-    classDef det fill:#dceaf7,stroke:#2b6ca3,color:#111;
-    classDef ai fill:#fbe9c8,stroke:#b57d18,color:#111;
-    classDef chain fill:#dff0e2,stroke:#2e7d4f,color:#111;
-    class U ui;
-    class ORCH,DET det;
-    class AI ai;
-    class EVM chain;
+    subgraph ENGINE ["3. Deterministic Adjudication Engine"]
+        ENG1["Python Engine (rules/amex_reason_codes.json)<br/>Derives Facts ──► Checks Exclusions ──► Scores Defeaters"]
+    end
+
+    subgraph VERDICT ["4. Decision & Explanation"]
+        MEMO["Dual Memos (Cardmember & Merchant Views)<br/>+ Verbatim Rulebook Citations"]
+    end
+
+    subgraph LEDGER ["5. Trust & Commitment Layer"]
+        CHAIN["EVM Ledger (Prototype: Anvil RPC Port 8545)<br/>Roadmap: Paladin Pente Privacy Group + Besu Base Ledger"]
+    end
+
+    E1 --> AI1
+    AI1 -- "Attested Facts" --> ENG1
+    ENG1 -- "Fired Rules & Confidence" --> MEMO
+    ENG1 -- "SHA-256 State Hash" --> CHAIN
+
+    classDef stage fill:#f8fafc,stroke:#64748b,color:#0f172a;
+    classDef ai fill:#fef3c7,stroke:#d97706,color:#78350f;
+    classDef py fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef ledger fill:#dcfce7,stroke:#16a34a,color:#14532d;
+
+    class E1 stage;
+    class AI1,MEMO ai;
+    class ENG1 py;
+    class CHAIN ledger;
 ```
 
 *Paladin is a Linux Foundation Decentralized Trust project already deployed by central banks, commercial banks, and financial institutions.*
