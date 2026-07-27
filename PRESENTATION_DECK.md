@@ -72,20 +72,35 @@ Verdict Chain ingests a disputed charge, parses evidence into structured facts c
 
 ## Slide 5 — How It Works (Pipeline Flow)
 
-### **Six operational stages, 17–27 seconds, every step recorded**
+### **Six operational stages, 17–27 seconds, four distinct outcome branches**
 
 ```mermaid
-flowchart LR
-    S1["Stage 1: Classify<br/>(AI Perception)"] --> S2["Stage 2: Extract Facts<br/>(AI Perception)"]
-    S2 --> S3["Stage 3: Derive Facts<br/>(Python Engine)"]
-    S3 --> S4["Stage 4: Score Rules<br/>(Python Engine)"]
-    S4 --> S5["Stage 5: Explain Memos<br/>(AI Perception)"]
-    S5 --> S6["Stage 6: Commit Ledger<br/>(EVM Devnet / Paladin)"]
+flowchart TD
+    S1["Stage 1: Classify (AI)<br/>Detects Amex Reason Codes 4554, 4553, 4512, 4544"] --> S2
+    S2["Stage 2: Extract Facts (AI)<br/>Parses Receipts, Trackings, Chat Logs ──► Atomic Facts"] --> S3
+    S3["Stage 3: Derive Facts (Python)<br/>Computes Address Mismatches, Ticket Numbers, Signatures"] --> S4
+
+    subgraph ADJUDICATION ["Stage 4: Deterministic Scoring & Rules Engine (Python)"]
+        S4{"Rule & Exclusion Check"}
+        EXC["Exclusion Gate (Case D)<br/>Distinct Ticket Numbers ──► Code 4512 Excluded"]
+        DEF["Defeater Engine (Case A & C)<br/>Wrong Address ──► 4554-D2 Defeated (0.00 Weight)<br/>Specific Defect ──► 4553-D5 Defeated"]
+        SCORE["Weighted Scorer (Case B)<br/>Signed POD + Chat ──► 100% Merchant Win"]
+    end
+
+    S4 -- "Exclusion Triggered" --> EXC --> V4["Verdict: NOT_CHARGEABLE (Case D)"]
+    S4 -- "Defeater Fired" --> DEF --> V1["Verdict: CARDMEMBER (Case A) / ESCALATE (Case C)"]
+    S4 -- "No Defeaters" --> SCORE --> V2["Verdict: MERCHANT (Case B)"]
+
+    V1 & V2 & V4 --> S5["Stage 5: Dual Decision Memos (AI)"]
+    S5 --> S6["Stage 6: EVM Ledger / Paladin Pente Hash Commitment"]
 
     classDef ai fill:#fbe9c8,stroke:#b57d18,color:#111;
     classDef py fill:#dceaf7,stroke:#2b6ca3,color:#111;
+    classDef verdict fill:#dcfce7,stroke:#16a34a,color:#14532d;
+
     class S1,S2,S5 ai;
-    class S3,S4,S6 py;
+    class S3,S4,EXC,DEF,SCORE,S6 py;
+    class V1,V2,V4 verdict;
 ```
 
 ### Worked Narrative Example:
