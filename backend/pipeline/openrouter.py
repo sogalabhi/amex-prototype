@@ -8,7 +8,7 @@ logger = logging.getLogger("verdict_chain")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
-async def call_openrouter_json(prompt: str, model: str = None) -> dict:
+async def call_openrouter_json(prompt: str, model: str = None, max_tokens: int = 500) -> dict:
     """Call OpenRouter API with JSON response format enforced."""
     if not OPENROUTER_API_KEY:
         raise ValueError("OPENROUTER_API_KEY is not set in backend/.env")
@@ -34,7 +34,7 @@ async def call_openrouter_json(prompt: str, model: str = None) -> dict:
         ],
         "response_format": {"type": "json_object"},
         "temperature": 0,
-        "max_tokens": 1000
+        "max_tokens": max_tokens
     }
 
     async with httpx.AsyncClient(timeout=60.0) as client:

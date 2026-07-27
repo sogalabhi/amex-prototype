@@ -39,6 +39,15 @@ def _find_matching_facts(
     return matching
 
 
+def check_exclusions(code_rules: dict, all_facts: list[AtomicFact | DerivedFact]) -> dict | None:
+    """Check if any rulebook exclusion condition fires."""
+    fact_types = {f.fact_type for f in all_facts if f.value is not None}
+    for exc in code_rules.get("exclusions", []):
+        if exc["when"] in fact_types:
+            return exc
+    return None
+
+
 def score_dispute(
     reason_code: str, all_facts: list[AtomicFact | DerivedFact]
 ) -> ReasoningResult:
@@ -50,6 +59,20 @@ def score_dispute(
     code_rules = rules.get(reason_code)
     if not code_rules:
         raise ValueError(f"Unknown reason code: {reason_code}")
+
+    # --- Exclusion Gate ---
+    exclusion = check_exclusions(code_rules, all_facts)
+    if exclusion:
+        all_facts_dicts = [f.model_dump() for f in all_facts]
+        return ReasoningResult(
+            verdict=Verdict.NOT_CHARGEABLE_UNDER_CODE,
+            reason_code=reason_code,
+            confidence=1.0,
+            raw_score=0.0,
+            fired_rules=[],
+            exclusion_applied=exclusion,
+            all_facts=all_facts_dicts,
+        )
 
     fired_rules: list[FiredRule] = []
     defeaters = code_rules.get("defeaters", [])

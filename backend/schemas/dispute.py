@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -43,6 +43,7 @@ class GroundTruth(BaseModel):
 class DisputeCase(BaseModel):
     case_id: str
     transaction: Transaction
+    related_charges: Optional[list[Transaction]] = Field(default_factory=list)
     cardmember_claim: CardmemberClaim
     merchant_evidence: list[MerchantDocument]
     ground_truth: Optional[GroundTruth] = None

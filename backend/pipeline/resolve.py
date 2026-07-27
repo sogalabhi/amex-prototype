@@ -231,12 +231,15 @@ async def _run_cli(case_name: str):
             print(f"  Confidence: {conf:.1%}")
             print()
 
-        elif event_type == "memo":
-            print(f"[{event_data['elapsed_ms']}ms] ✓ MEMOS GENERATED")
-            print(f"\n--- MERCHANT VIEW ---")
-            print(event_data.get("merchant_memo", "(none)")[:500])
-            print(f"\n--- CARDMEMBER VIEW ---")
-            print(event_data.get("cardmember_memo", "(none)")[:500])
+        elif event_type == "memo_generated":
+            merchant_memo = event_data.get("merchant_memo", "(none)")
+            cardmember_memo = event_data.get("cardmember_memo", "(none)")
+            elapsed = event_data.get("elapsed_ms")
+            print(f"[{elapsed}ms] ✓ MEMOS GENERATED\n")
+            print("--- MERCHANT VIEW ---")
+            print(str(merchant_memo)[:500])
+            print("\n--- CARDMEMBER VIEW ---")
+            print(str(cardmember_memo)[:500])
             print()
 
         elif event_type == "ledger":

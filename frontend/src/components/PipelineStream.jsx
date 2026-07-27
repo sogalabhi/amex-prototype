@@ -33,6 +33,13 @@ const VERDICT_STYLES = {
     track: "bg-elevated",
     fill: "bg-muted",
   },
+  NOT_CHARGEABLE_UNDER_CODE: {
+    bg: "bg-teal-500/10",
+    border: "border-teal-500/30",
+    text: "text-teal-400",
+    label: "NOT CHARGEABLE UNDER CODE 4512",
+    glow: "shadow-[0_0_30px_rgba(20,184,166,0.2)]",
+  },
 };
 
 function Spinner() {
@@ -291,20 +298,21 @@ export default function PipelineStream({ events, isResolving, totalElapsed }) {
   );
 }
 
+
 function FactRow({ source, type, value, emphasis }) {
   return (
-    <div className="flex items-baseline gap-2 text-[11px]">
+    <div className="flex items-baseline gap-2 text-xs">
       <span
-        className={`shrink-0 rounded border px-1.5 py-px font-mono text-[10px] ${
+        className={`shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] ${
           emphasis
-            ? "border-brand-accent/30 bg-brand/12 font-semibold text-brand-accent"
-            : "border-line bg-elevated text-muted"
+            ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold"
+            : "bg-white/5 text-slate-400 border border-white/5"
         }`}
       >
         {source}
       </span>
-      <span className="shrink-0 text-muted">{type}</span>
-      <span className="truncate font-mono text-ink">{JSON.stringify(value)}</span>
+      <span className="shrink-0 text-slate-400 font-medium">{type}:</span>
+      <span className="truncate font-mono text-slate-200">{JSON.stringify(value)}</span>
     </div>
   );
 }

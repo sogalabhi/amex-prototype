@@ -1,0 +1,54 @@
+{
+  "case_id": "CASE_D",
+  "transaction": {
+    "txn_id": "AX-8842-07711",
+    "amount": 1890.00,
+    "currency": "AUD",
+    "date": "2026-06-03",
+    "merchant": "Kestrel Airways",
+    "descriptor": "KESTREL AIRWAYS*ONLINE",
+    "channel": "card_not_present"
+  },
+  "related_charges": [
+    {
+      "txn_id": "AX-8842-07712",
+      "amount": 1890.00,
+      "currency": "AUD",
+      "date": "2026-06-03",
+      "merchant": "Kestrel Airways",
+      "descriptor": "KESTREL AIRWAYS*ONLINE",
+      "channel": "card_not_present"
+    }
+  ],
+  "cardmember_claim": {
+    "filed_date": "2026-07-09",
+    "text": "I have been charged twice for the same flight. Two identical charges of $1,890 from Kestrel Airways on 3 June, forty minutes apart. I only booked one trip. Please reverse the second charge."
+  },
+  "merchant_evidence": [
+    {
+      "doc_id": "M-D-01",
+      "type": "order_receipt",
+      "content": "KESTREL AIRWAYS — E-TICKET CONFIRMATION\nBooking reference: KQ7F2M\nTicket number: 081-2244551903\nIssued: 03/06/2026 11:04\nPassenger: A. RANGARAJAN\nSYD 14/07 08:15 → SIN 14:40 | SIN 22/07 19:20 → SYD 06:05\nFare + taxes: AUD 1,890.00\nPayment: AMEX ending 1006 — txn AX-8842-07711"
+    },
+    {
+      "doc_id": "M-D-02",
+      "type": "order_receipt",
+      "content": "KESTREL AIRWAYS — E-TICKET CONFIRMATION\nBooking reference: KQ7H9T\nTicket number: 081-2244551904\nIssued: 03/06/2026 11:41\nPassenger: M. RANGARAJAN\nSYD 14/07 08:15 → SIN 14:40 | SIN 22/07 19:20 → SYD 06:05\nFare + taxes: AUD 1,890.00\nPayment: AMEX ending 1006 — txn AX-8842-07712"
+    },
+    {
+      "doc_id": "M-D-03",
+      "type": "delivery_confirmation",
+      "content": "KESTREL AIRWAYS — COUPON STATUS REPORT\nTicket 081-2244551903: SYD-SIN FLOWN 14/07/2026 | SIN-SYD FLOWN 22/07/2026\nTicket 081-2244551904: SYD-SIN FLOWN 14/07/2026 | SIN-SYD FLOWN 22/07/2026\nBoth tickets checked in at SYD counter 14/07/2026 06:22, same booking party."
+    },
+    {
+      "doc_id": "M-D-04",
+      "type": "chat_log",
+      "content": "[03/06 11:38] Customer: Can I add a second passenger to booking KQ7F2M?\n[03/06 11:40] Support: That booking is ticketed. Easiest is a second booking on the same flights — same fare is still available.\n[03/06 11:44] Customer: Done, thanks."
+    }
+  ],
+  "ground_truth": {
+    "reason_code": "4512",
+    "expected_outcome": "NOT_CHARGEABLE_UNDER_CODE",
+    "why": "Two distinct ticket numbers were issued and both were flown. The Amex guide excludes airline tickets with different ticket numbers from Reason Code 4512, so the dispute cannot be raised under this code."
+  }
+}
