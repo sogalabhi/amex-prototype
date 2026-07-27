@@ -6,7 +6,6 @@ import PipelineStream from "./components/PipelineStream";
 import DecisionMemo from "./components/DecisionMemo";
 import LedgerTrail from "./components/LedgerTrail";
 import Footer from "./components/Footer";
-import "./App.css";
 
 function App() {
   const [cases, setCases] = useState([]);
@@ -23,19 +22,26 @@ function App() {
       .catch((err) => console.error("Failed to load cases:", err));
   }, []);
 
-  // Load case data when selection changes
+  // Load case data when selection changes. The cancelled flag keeps a slow response
+  // for a previously selected case from overwriting a newer one.
   useEffect(() => {
-    if (!selectedCase) {
-      setCaseData(null);
-      return;
-    }
+    if (!selectedCase) return;
+
+    let cancelled = false;
     fetchCase(selectedCase)
-      .then(setCaseData)
+      .then((data) => {
+        if (!cancelled) setCaseData(data);
+      })
       .catch((err) => console.error("Failed to load case:", err));
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedCase]);
 
   const handleSelect = useCallback((caseName) => {
     setSelectedCase(caseName);
+    setCaseData(null);
     setEvents({});
     setTotalElapsed(null);
   }, []);
@@ -64,33 +70,39 @@ function App() {
   }, [selectedCase, isResolving]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-slate-200 pb-12">
-      {/* Header */}
-      <header className="border-b border-white/5 bg-[#0a0a0f]/80 backdrop-blur-sm sticky top-0 z-40">
-        <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#006FCF] flex items-center justify-center text-white font-bold text-sm">
-              V
+    <div className="min-h-screen bg-canvas text-ink font-sans pb-16">
+      <header className="sticky top-0 z-40 border-b border-line bg-canvas/90 backdrop-blur-sm">
+        <div className="h-0.5 bg-brand" />
+        <div className="mx-auto flex max-w-[1500px] items-center justify-between px-8 py-4">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded bg-brand text-[13px] font-bold tracking-tight text-white">
+              VC
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">Verdict Chain</h1>
-              <p className="text-xs text-slate-500">AI-Powered Dispute Resolution</p>
+            <div className="leading-tight">
+              <h1 className="text-[15px] font-semibold tracking-tight text-ink">
+                Verdict Chain
+              </h1>
+              <p className="text-xs text-muted">Dispute Resolution Platform</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-xs text-slate-600">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5" />
-              Pipeline Ready
-            </div>
+
+          <div className="flex items-center gap-2">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isResolving ? "animate-pulse bg-brand-accent" : "bg-muted/50"
+              }`}
+            />
+            <span className="text-xs font-medium text-muted">
+              {isResolving ? "Adjudicating" : "Ready"}
+            </span>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-[1600px] mx-auto px-6 py-6">
-        <div className="grid grid-cols-[380px_1fr] gap-6 items-start">
-          {/* Left Column - Case Selector + Evidence */}
-          <div className="space-y-6 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+      <main className="mx-auto max-w-[1500px] px-8 py-8">
+        <div className="grid grid-cols-[360px_1fr] items-start gap-8">
+          {/* Left column — case selection and raw evidence */}
+          <div className="sticky top-24 max-h-[calc(100vh-8rem)] space-y-8 overflow-y-auto pr-1">
             <CaseSelector
               cases={cases}
               selectedCase={selectedCase}
@@ -101,8 +113,8 @@ function App() {
             <EvidencePanel caseData={caseData} />
           </div>
 
-          {/* Right Column - Pipeline + Memo + Ledger */}
-          <div className="space-y-6">
+          {/* Right column — pipeline, memo, audit trail */}
+          <div className="space-y-8">
             <PipelineStream
               events={events}
               isResolving={isResolving}
