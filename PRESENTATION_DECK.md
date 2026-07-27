@@ -82,15 +82,17 @@ flowchart TD
     S4 -- "No Defeaters" --> SCORE --> V2["Verdict: MERCHANT (Case B)"]
 
     V1 & V2 & V4 --> S5["Stage 5: Dual Memos (AI Perception)<br/>OpenRouter API (openai/gpt-4o-mini)"]
-    S5 --> S6["Stage 6: Audit Ledger & Blockchain Commitment<br/>EVM Chain Node (Anvil RPC port 8545) / Paladin Pente"]
+    S5 --> S6["Stage 6: Web3 Audit Ledger (PALADIN PENTE)<br/>3-Party Privacy Group (Cardmember · Merchant · Amex Nodes)<br/>Private EVM Execution ──► Besu Base Ledger Commitments"]
 
     classDef ai fill:#fbe9c8,stroke:#b57d18,color:#111;
     classDef py fill:#dceaf7,stroke:#2b6ca3,color:#111;
     classDef verdict fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef web3 fill:#d1fae5,stroke:#059669,color:#064e3b;
 
     class S1,S2,S5 ai;
-    class S3,S4,EXC,DEF,SCORE,S6 py;
+    class S3,S4,EXC,DEF,SCORE py;
     class V1,V2,V4 verdict;
+    class S6 web3;
 ```
 
 ---
