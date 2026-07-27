@@ -64,7 +64,7 @@ Verdict Chain ingests a disputed charge, parses evidence into structured facts c
 - **Auto-Gather & Parse:** Evidence $\rightarrow$ structured facts with source span provenance.
 - **Fair Weighing:** Rules from the Amex guide, weighted, with defeater logic.
 - **Transparent Reasoning:** Memo cites fact IDs and verbatim rulebook text.
-- **Provable Trail:** Sequence enforced on-chain, data confidential off-chain.
+- **Web3 Provable Trail:** Paladin Pente privacy group execution; state commitments published on-chain.
 
 *Separation of Powers — The AI never decides anything. It only reads.*
 
@@ -80,7 +80,7 @@ flowchart LR
     S2 --> S3["Stage 3: Derive Facts<br/>(Python Engine)"]
     S3 --> S4["Stage 4: Score Rules<br/>(Python Engine)"]
     S4 --> S5["Stage 5: Explain Memos<br/>(AI Perception)"]
-    S5 --> S6["Stage 6: Commit Ledger<br/>(EVM Devnet)"]
+    S5 --> S6["Stage 6: Commit Ledger<br/>(EVM Devnet / Paladin)"]
 
     classDef ai fill:#fbe9c8,stroke:#b57d18,color:#111;
     classDef py fill:#dceaf7,stroke:#2b6ca3,color:#111;
@@ -97,7 +97,7 @@ flowchart LR
 
 ## Slide 6 — Architecture
 
-### **Four layers, all production-proven components**
+### **Four layers, featuring Paladin Web3 Privacy Integration**
 
 ```mermaid
 flowchart TD
@@ -117,24 +117,24 @@ flowchart TD
         MEMO["Dual Memos (Cardmember & Merchant Views)<br/>+ Verbatim Rulebook Citations"]
     end
 
-    subgraph LEDGER ["5. Trust & Commitment Layer"]
-        CHAIN["EVM Ledger (Prototype: Anvil RPC Port 8545)<br/>Roadmap: Paladin Pente Privacy Group + Besu Base Ledger"]
+    subgraph WEB3 ["5. Web3 Trust & Commitment Layer (PALADIN PENTE)"]
+        CHAIN["⛓️ Paladin Pente 3-Party Privacy Group<br/>(Cardmember Node · Merchant Node · Amex Central Node)<br/>Private EVM Execution ──► Besu Base Ledger State Commitments"]
     end
 
     E1 --> AI1
     AI1 -- "Attested Facts" --> ENG1
     ENG1 -- "Fired Rules & Confidence" --> MEMO
-    ENG1 -- "SHA-256 State Hash" --> CHAIN
+    ENG1 -- "SHA-256 Verdict Commitment" --> CHAIN
 
     classDef stage fill:#f8fafc,stroke:#64748b,color:#0f172a;
     classDef ai fill:#fef3c7,stroke:#d97706,color:#78350f;
     classDef py fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
-    classDef ledger fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef web3 fill:#dcfce7,stroke:#16a34a,color:#14532d;
 
     class E1 stage;
     class AI1,MEMO ai;
     class ENG1 py;
-    class CHAIN ledger;
+    class CHAIN web3;
 ```
 
 *Paladin is a Linux Foundation Decentralized Trust project already deployed by central banks, commercial banks, and financial institutions.*
@@ -154,13 +154,17 @@ flowchart TD
 
 ---
 
-## Slide 8 — Transparency & Trust
+## Slide 8 — Transparency & Web3 Trust
 
-### **Both parties receive the same decision, and can verify it wasn't changed**
+### **Paladin Pente 3-Party Privacy Groups — Confidential, Provable Settlement**
 
-In the production architecture, the pipeline is orchestrated as an on-chain state machine: AI inference runs off-chain and submits attested results back, while the deterministic adjudication executes in the contract — so the sequence is enforced and the decision is independently verifiable by both parties. In production, each dispute runs inside a Paladin Pente privacy group — private EVM execution shared by three parties (Card Member, merchant, issuer), with state commitments published to the base ledger.
+*Dispute data can never go on a public chain — so it doesn't.*
 
-*Today: Hash commitments mined to an EVM ledger, verifiable by transaction receipt. Paladin privacy-group integration is the first item on our August roadmap.*
+- **🔒 Confidential Off-Chain Perception:** Raw evidence (receipts, tracking logs) stays off-chain between parties. Personal data is never published on-chain.
+- **⛓ Paladin Pente 3-Party Privacy Group:** Adjudication smart contracts execute in a Pente private EVM group shared exclusively by three nodes: **Cardmember Node, Merchant Node, and Amex Central Node**.
+- **📜 Base Ledger Commitments:** Only SHA-256 state commitments reach the base ledger (Hyperledger Besu / EVM), giving both parties an immutable, tamper-evident audit receipt.
+
+*Today: Hash commitments mined to an EVM devnet ledger (Anvil RPC port 8545), verifiable by transaction receipt. Paladin Pente 3-node deployment is the first item on our August roadmap.*
 
 ---
 
