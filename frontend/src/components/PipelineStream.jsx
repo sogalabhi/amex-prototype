@@ -29,6 +29,13 @@ const VERDICT_STYLES = {
     label: "ESCALATED TO HUMAN REVIEW",
     glow: "shadow-[0_0_30px_rgba(168,85,247,0.2)]",
   },
+  NOT_CHARGEABLE_UNDER_CODE: {
+    bg: "bg-teal-500/10",
+    border: "border-teal-500/30",
+    text: "text-teal-400",
+    label: "NOT CHARGEABLE UNDER CODE 4512",
+    glow: "shadow-[0_0_30px_rgba(20,184,166,0.2)]",
+  },
 };
 
 function Spinner() {
@@ -214,9 +221,14 @@ export default function PipelineStream({ events, isResolving, totalElapsed }) {
               <div className={`text-2xl font-bold mb-1 ${style.text}`}>
                 {style.label}
               </div>
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-slate-500 mb-2">
                 Reason Code {events.verdict.reason_code}
               </div>
+              {events.verdict.exclusion_applied && (
+                <div className="my-2 p-2 rounded bg-teal-500/10 border border-teal-500/30 text-xs text-teal-300 font-mono">
+                  🚫 Exclusion Applied: {events.verdict.exclusion_applied.rulebook_text}
+                </div>
+              )}
               <ConfidenceBar
                 confidence={events.verdict.confidence}
                 verdict={events.verdict.verdict}

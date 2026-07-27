@@ -1,10 +1,11 @@
 {
   "meta": {
-    "source": "American Express Chargeback Codes - Australian Merchant Guide",
+    "source": "American Express Chargeback Codes — Australian Merchant Guide",
     "market": "AU",
     "note": "Conditions and rulebook text come from Amex. Numeric weights are our calibration, not Amex-published.",
     "confidence_threshold": 0.50
   },
+
   "4554": {
     "title": "Goods and Services Not Received",
     "chargeback_reason": "Card Member did not receive, or only partially received, goods and/or services.",
@@ -14,6 +15,7 @@
     "excluded_transactions": [
       "Transactions that could be charged back under Reason Code 4513 - Credit Not Presented"
     ],
+    "exclusions": [],
     "merchant_defenses": [
       {
         "id": "4554-D1",
@@ -88,16 +90,18 @@
       {
         "defeats": "4554-D2",
         "when": "delivery_address_mismatch",
-        "note": "If the delivery address does not match the specified address, D2 cannot apply - suppress its weight entirely."
+        "note": "If the delivery address does not match the specified address, D2 cannot apply — suppress its weight entirely."
       }
     ]
   },
+
   "4553": {
     "title": "Not As Described Or Defective Merchandise",
     "chargeback_reason": "Card Member received goods or services different from the written description provided at the time of purchase, or received damaged or defective goods or services.",
     "dispute_window_days": 120,
     "merchant_response_days": 20,
     "excluded_transactions": [],
+    "exclusions": [],
     "merchant_defenses": [
       {
         "id": "4553-D1",
@@ -174,6 +178,7 @@
       }
     ]
   },
+
   "4512": {
     "title": "Multiple Processing",
     "chargeback_reason": "A single Transaction for the same amount was sent for payment multiple times.",
@@ -182,6 +187,20 @@
     "excluded_transactions": [
       "Airline cases involving voided tickets pending Credit that were reissued for a different itinerary",
       "Airline tickets with different ticket numbers"
+    ],
+    "exclusions": [
+      {
+        "id": "4512-X1",
+        "when": "distinct_ticket_numbers",
+        "rulebook_text": "Airline tickets with different ticket numbers",
+        "effect": "NOT_CHARGEABLE_UNDER_CODE"
+      },
+      {
+        "id": "4512-X2",
+        "when": "voided_ticket_reissued_different_itinerary",
+        "rulebook_text": "Airline cases involving voided tickets pending Credit that were reissued for a different itinerary",
+        "effect": "NOT_CHARGEABLE_UNDER_CODE"
+      }
     ],
     "merchant_defenses": [
       {
@@ -212,6 +231,7 @@
     ],
     "defeaters": []
   },
+
   "4544": {
     "title": "Cancellation Of Recurring Goods / Services",
     "chargeback_reason": "Card Member's account continues to be Charged even though the Card Member notified the Merchant to cancel or revoke consent to the recurring billing arrangement.",
@@ -221,6 +241,7 @@
       "Any Transactions other than Recurring Billing Charges for goods or services, including Deferred Billing Charges",
       "Card Present Transactions"
     ],
+    "exclusions": [],
     "merchant_defenses": [
       {
         "id": "4544-D1",

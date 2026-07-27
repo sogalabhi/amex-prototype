@@ -25,6 +25,7 @@ class VerdictEvent(BaseModel):
     verdict: str
     confidence: float
     reason_code: str
+    exclusion_applied: Optional[dict] = None
     elapsed_ms: int
 
 

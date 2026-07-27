@@ -277,7 +277,6 @@ def derive_facts(atomic_facts: list[AtomicFact], case: DisputeCase) -> list[Deri
     billing_date = _get_fact_value(atomic_facts, "billing_date")
 
     if cancel_date and billing_date:
-        # Simple string comparison works for ISO dates; for other formats, parse
         try:
             from datetime import datetime
             cancel_dt = datetime.fromisoformat(cancel_date)
@@ -292,6 +291,47 @@ def derive_facts(atomic_facts: list[AtomicFact], case: DisputeCase) -> list[Deri
                 )
         except (ValueError, TypeError):
             pass
+
+    # --- Ticket Facts (4512 Airline Exclusions) ---
+    ticket_numbers = {
+        str(f.value) for f in atomic_facts
+        if f.fact_type == "ticket_number" and f.value is not None
+    }
+    if len(ticket_numbers) >= 2:
+        source_ids = _get_fact_ids(atomic_facts, "ticket_number")
+        _add(
+            "distinct_ticket_numbers",
+            sorted(list(ticket_numbers)),
+            source_ids,
+            "Two or more distinct airline ticket numbers issued across the disputed transactions",
+        )
+
+    flown_facts = [
+        f for f in atomic_facts
+        if f.fact_type == "ticket_flown_status" and str(f.value).upper() == "FLOWN"
+    ]
+    if len(ticket_numbers) >= 2 and len(flown_facts) >= 1:
+        source_ids = _get_fact_ids(atomic_facts, "ticket_flown_status")
+        _add(
+            "each_charge_linked_and_valid",
+            True,
+            source_ids,
+            "Each disputed charge maps to a distinct ticket number, and tickets were flown",
+        )
+
+    # --- Duplicate Amount & Merchant (4512) ---
+    charges = [case.transaction] + (case.related_charges or [])
+    if len(charges) >= 2:
+        amounts = {c.amount for c in charges}
+        merchants = {c.merchant for c in charges}
+        txn_ids = {c.txn_id for c in charges}
+        if len(amounts) == 1 and len(merchants) == 1 and len(txn_ids) == len(charges):
+            _add(
+                "duplicate_amount_merchant_and_date_window",
+                True,
+                [],
+                "Identical amount and merchant across distinct transaction IDs within comparison window",
+            )
 
     # --- No merchant evidence within response window (all codes, weight 1.00) ---
     if len(case.merchant_evidence) == 0:

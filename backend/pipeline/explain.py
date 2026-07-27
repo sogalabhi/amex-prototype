@@ -39,6 +39,7 @@ async def generate_memos(reasoning: ReasoningResult) -> dict:
         "confidence": round(reasoning.confidence, 4),
         "raw_score": round(reasoning.raw_score, 4),
         "fired_rules": fired_summary,
+        "exclusion_applied": reasoning.exclusion_applied,
         "relevant_facts": relevant_facts,
     }
 
@@ -59,17 +60,13 @@ Generate TWO versions of the memo in a single JSON response:
 
 1. "merchant_memo": Addressed to the merchant. Professional, clear.
    - State the verdict and reason code
-   - For each ACTIVE fired rule, quote the exact rulebook_text and explain which facts (by fact_id) supported it
-   - For each DEFEATED rule, explain why it was defeated and which fact caused the defeat
+   - For NOT_CHARGEABLE_UNDER_CODE: Explain that the dispute was dismissed as procedurally non-chargeable under this reason code (e.g. quote exclusion_applied text). State that both transactions are independently evidenced as separate tickets.
    - State the confidence level with the framing note above
-   - Provide next steps (if merchant lost: appeal rights, additional evidence that could help; if merchant won: resolution timeline)
 
 2. "cardmember_memo": Addressed to the cardmember. Professional, empathetic, clear.
    - State the verdict and reason code in plain language
-   - Explain which evidence supported the decision, citing fact_ids
-   - For DEFEATED rules, explain in plain terms why the merchant's defense didn't hold
+   - For NOT_CHARGEABLE_UNDER_CODE: Explain that this dispute cannot be processed under Reason Code {reasoning.reason_code} because the evidence shows two distinct ticket numbers issued and flown. Note that if the cardmember believes a transaction was unauthorized, that falls under a different reason code category (Fraud).
    - State the confidence level
-   - Provide next steps (if cardmember lost: what to do next; if cardmember won: when to expect the credit)
 
 For ESCALATED verdicts (ESCALATE_HUMAN_REVIEW):
    - Both memos should explain that the automated system determined the evidence was insufficient for a definitive resolution
@@ -81,10 +78,10 @@ CRITICAL RULES:
 - Quote rulebook_text exactly as provided
 - Cite fact_ids when referencing evidence
 - Both memos must contain the same factual content, just different framing
-- Keep each memo under 500 words
+- Keep each memo concise (under 150 words)
 - Use markdown formatting (headers, bold, bullet points)
 
 Respond with ONLY valid JSON:
 {{"merchant_memo": "...", "cardmember_memo": "..."}}"""
 
-    return await call_openrouter_json(prompt)
+    return await call_openrouter_json(prompt, max_tokens=800)
