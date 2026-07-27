@@ -7,91 +7,109 @@ const TYPE_LABELS = {
   merchant_photos: "Photos",
 };
 
-const TYPE_COLORS = {
-  order_receipt: "bg-blue-500/20 text-blue-400",
-  delivery_confirmation: "bg-emerald-500/20 text-emerald-400",
-  chat_log: "bg-amber-500/20 text-amber-400",
-  policy: "bg-purple-500/20 text-purple-400",
-  product_description: "bg-cyan-500/20 text-cyan-400",
-  merchant_photos: "bg-pink-500/20 text-pink-400",
-};
+function Chip({ children, variant = "neutral" }) {
+  const styles = {
+    neutral: "border-line bg-elevated text-muted",
+    brand: "border-brand-accent/30 bg-brand/12 text-brand-accent",
+  };
+  return (
+    <span
+      className={`rounded border px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wide ${styles[variant]}`}
+    >
+      {children}
+    </span>
+  );
+}
 
 export default function EvidencePanel({ caseData }) {
   if (!caseData) {
     return (
-      <div className="flex items-center justify-center h-48 text-slate-600 text-sm">
-        Select a case to view evidence
-      </div>
+      <section>
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+          Evidence
+        </h2>
+        <div className="rounded-lg border border-dashed border-line px-4 py-10 text-center text-xs text-muted">
+          Select a case to view its evidence
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-        Raw Evidence
+    <section>
+      <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+        Evidence
       </h2>
 
-      {/* Cardmember Claim */}
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 font-mono">
-            CLAIM
-          </span>
-          <span className="text-xs text-slate-500">
-            Filed {caseData.cardmember_claim.filed_date}
-          </span>
-        </div>
-        <p className="text-sm text-slate-300 leading-relaxed">
-          {caseData.cardmember_claim.text}
-        </p>
-      </div>
-
-      {/* Transaction */}
-      <div className="rounded-xl border border-white/5 bg-[#14141f] p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs px-2 py-0.5 rounded-md bg-white/10 text-slate-400 font-mono">
-            TXN
-          </span>
-          <span className="text-xs text-slate-500">{caseData.transaction.txn_id}</span>
-        </div>
-        <div className="font-mono text-xs text-slate-400 space-y-1">
-          <div>Amount: {caseData.transaction.currency} {caseData.transaction.amount}</div>
-          <div>Date: {caseData.transaction.date}</div>
-          <div>Merchant: {caseData.transaction.merchant}</div>
-          <div>Descriptor: {caseData.transaction.descriptor}</div>
-          <div>Channel: {caseData.transaction.channel}</div>
-          {caseData.transaction.shipping_address_on_order && (
-            <div>Ship to: {caseData.transaction.shipping_address_on_order}</div>
-          )}
-        </div>
-      </div>
-
-      {/* Merchant Evidence */}
-      <div className="text-xs text-slate-500 uppercase tracking-wider mt-4 mb-2">
-        Merchant Evidence ({caseData.merchant_evidence.length} documents)
-      </div>
-      {caseData.merchant_evidence.map((doc) => (
-        <div
-          key={doc.doc_id}
-          className="rounded-xl border border-white/5 bg-[#14141f] p-4"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs px-2 py-0.5 rounded-md bg-white/10 text-slate-300 font-mono">
-              {doc.doc_id}
-            </span>
-            <span
-              className={`text-xs px-2 py-0.5 rounded-md ${
-                TYPE_COLORS[doc.type] || "bg-white/10 text-slate-400"
-              }`}
-            >
-              {TYPE_LABELS[doc.type] || doc.type}
+      <div className="space-y-2.5">
+        {/* Cardmember claim — the only brand-tinted panel, it anchors the dispute */}
+        <div className="rounded-lg border border-line bg-surface p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <Chip variant="brand">Claim</Chip>
+            <span className="text-[11px] text-muted">
+              Filed {caseData.cardmember_claim.filed_date}
             </span>
           </div>
-          <pre className="text-xs text-slate-400 font-mono whitespace-pre-wrap leading-relaxed overflow-x-auto">
-            {doc.content}
-          </pre>
+          <p className="text-[13px] leading-relaxed text-ink">
+            {caseData.cardmember_claim.text}
+          </p>
         </div>
-      ))}
+
+        {/* Transaction */}
+        <div className="rounded-lg border border-line bg-surface p-4">
+          <div className="mb-2.5 flex items-center gap-2">
+            <Chip>Transaction</Chip>
+            <span className="font-mono text-[11px] text-muted">
+              {caseData.transaction.txn_id}
+            </span>
+          </div>
+          <dl className="space-y-1 text-[11px]">
+            <Field label="Amount">
+              {caseData.transaction.currency} {caseData.transaction.amount}
+            </Field>
+            <Field label="Date">{caseData.transaction.date}</Field>
+            <Field label="Merchant">{caseData.transaction.merchant}</Field>
+            <Field label="Descriptor">{caseData.transaction.descriptor}</Field>
+            <Field label="Channel">{caseData.transaction.channel}</Field>
+            {caseData.transaction.shipping_address_on_order && (
+              <Field label="Ship to">
+                {caseData.transaction.shipping_address_on_order}
+              </Field>
+            )}
+          </dl>
+        </div>
+
+        {/* Merchant evidence */}
+        <div className="pt-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+          Merchant Submission · {caseData.merchant_evidence.length} documents
+        </div>
+
+        {caseData.merchant_evidence.map((doc) => (
+          <div
+            key={doc.doc_id}
+            className="rounded-lg border border-line bg-surface p-4"
+          >
+            <div className="mb-2.5 flex items-center gap-2">
+              <Chip>{doc.doc_id}</Chip>
+              <span className="text-[11px] font-medium text-ink">
+                {TYPE_LABELS[doc.type] || doc.type}
+              </span>
+            </div>
+            <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-muted">
+              {doc.content}
+            </pre>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div className="flex gap-2">
+      <dt className="w-20 shrink-0 text-muted">{label}</dt>
+      <dd className="min-w-0 flex-1 break-words font-mono text-ink">{children}</dd>
     </div>
   );
 }

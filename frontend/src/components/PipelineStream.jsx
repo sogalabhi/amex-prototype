@@ -1,79 +1,137 @@
-const STAGE_CONFIG = {
-  classified: { label: "Classification", icon: "🏷️" },
-  facts_extracted: { label: "Evidence Analysis", icon: "🔍" },
-  rules_fired: { label: "Rules Engine", icon: "⚖️" },
-  verdict: { label: "Verdict", icon: "📋" },
-  memo: { label: "Decision Memo", icon: "📝" },
-  ledger: { label: "Audit Trail", icon: "🔗" },
+const STAGES = ["classified", "facts_extracted", "rules_fired", "verdict", "memo", "ledger"];
+
+const STAGE_LABELS = {
+  classified: "Reason Code Classification",
+  facts_extracted: "Evidence Analysis",
+  rules_fired: "Rulebook Engine",
+  verdict: "Verdict",
+  memo: "Decision Memo",
+  ledger: "Audit Trail",
 };
 
+// Outcome is encoded by fill weight rather than hue: the cardmember result carries
+// solid Amex blue, the merchant result a deep navy, and an escalation stays unfilled.
 const VERDICT_STYLES = {
   CARDMEMBER: {
-    bg: "bg-emerald-500/10",
-    border: "border-emerald-500/30",
-    text: "text-emerald-400",
-    label: "CARDMEMBER WINS",
-    glow: "shadow-[0_0_30px_rgba(34,197,94,0.2)]",
+    label: "Resolved in Favor of Cardmember",
+    panel: "border-brand bg-brand text-white",
+    sub: "text-white/70",
+    track: "bg-white/25",
+    fill: "bg-white",
   },
   MERCHANT: {
-    bg: "bg-amber-500/10",
-    border: "border-amber-500/30",
-    text: "text-amber-400",
-    label: "MERCHANT WINS",
-    glow: "shadow-[0_0_30px_rgba(245,158,11,0.2)]",
+    label: "Resolved in Favor of Merchant",
+    panel: "border-brand/40 bg-navy text-ink",
+    sub: "text-brand-accent/80",
+    track: "bg-white/12",
+    fill: "bg-brand-accent",
   },
   ESCALATE_HUMAN_REVIEW: {
-    bg: "bg-purple-500/10",
-    border: "border-purple-500/30",
-    text: "text-purple-400",
-    label: "ESCALATED TO HUMAN REVIEW",
-    glow: "shadow-[0_0_30px_rgba(168,85,247,0.2)]",
+    label: "Escalated for Human Review",
+    panel: "border-line bg-surface text-ink",
+    sub: "text-muted",
+    track: "bg-elevated",
+    fill: "bg-muted",
   },
 };
 
 function Spinner() {
   return (
-    <svg className="animate-spin h-4 w-4 text-[#006FCF]" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    <svg
+      className="h-3.5 w-3.5 animate-spin text-brand-accent"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="3"
+        fill="none"
+      />
+      <path fill="currentColor" d="M4 12a8 8 0 018-8V1C5.925 1 1 5.925 1 12h3z" />
     </svg>
   );
 }
 
-function StageHeader({ stage, isActive, isComplete, elapsedMs }) {
-  const config = STAGE_CONFIG[stage] || { label: stage, icon: "⚙️" };
+function StageHeader({ stage, index, isActive, isComplete, elapsedMs }) {
   return (
-    <div className="flex items-center gap-3 mb-3">
-      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all duration-500 ${
-        isComplete ? "bg-emerald-500/20 text-emerald-400" : isActive ? "bg-[#006FCF]/20" : "bg-white/5 text-slate-600"
-      }`}>
-        {isComplete ? "✓" : isActive ? <Spinner /> : config.icon}
-      </div>
-      <span className={`text-sm font-medium ${isComplete || isActive ? "text-slate-200" : "text-slate-600"}`}>
-        {config.label}
+    <div className="flex items-center gap-3">
+      <span
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold tabular-nums transition-colors ${
+          isComplete
+            ? "border-brand bg-brand text-white"
+            : isActive
+              ? "border-brand-accent bg-surface"
+              : "border-line bg-surface text-muted"
+        }`}
+      >
+        {isComplete ? <Check /> : isActive ? <Spinner /> : String(index + 1).padStart(2, "0")}
       </span>
+
+      <span
+        className={`text-[13px] font-semibold ${
+          isComplete || isActive ? "text-ink" : "text-muted"
+        }`}
+      >
+        {STAGE_LABELS[stage]}
+      </span>
+
       {elapsedMs !== undefined && (
-        <span className="text-xs text-slate-600 ml-auto font-mono">{(elapsedMs / 1000).toFixed(1)}s</span>
+        <span className="ml-auto font-mono text-[11px] tabular-nums text-muted">
+          {(elapsedMs / 1000).toFixed(1)}s
+        </span>
       )}
     </div>
   );
 }
 
-function ConfidenceBar({ confidence, verdict }) {
-  const style = VERDICT_STYLES[verdict] || VERDICT_STYLES.ESCALATE_HUMAN_REVIEW;
+function Check() {
+  return (
+    <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 6.2l2.3 2.3L9.5 3.8"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function StageCard({ stage, index, isActive, isComplete, elapsedMs, children }) {
+  return (
+    <div
+      className={`rounded-lg border bg-surface p-4 transition-colors ${
+        isComplete || isActive ? "border-line" : "border-line/50"
+      }`}
+    >
+      <StageHeader
+        stage={stage}
+        index={index}
+        isActive={isActive}
+        isComplete={isComplete}
+        elapsedMs={elapsedMs}
+      />
+      {children && <div className="animate-in mt-3 pl-9">{children}</div>}
+    </div>
+  );
+}
+
+function ConfidenceBar({ confidence, style }) {
   const pct = Math.round(confidence * 100);
   return (
-    <div className="mt-3">
-      <div className="flex justify-between text-xs mb-1">
-        <span className="text-slate-500">Confidence</span>
-        <span className={style.text}>{pct}%</span>
+    <div className="mt-4">
+      <div className="mb-1.5 flex items-baseline justify-between text-[11px]">
+        <span className={`uppercase tracking-[0.12em] ${style.sub}`}>Confidence</span>
+        <span className="font-mono font-semibold tabular-nums">{pct}%</span>
       </div>
-      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+      <div className={`h-1 overflow-hidden rounded-full ${style.track}`}>
         <div
-          className={`h-full rounded-full transition-all duration-1000 ease-out ${
-            verdict === "CARDMEMBER" ? "bg-emerald-500" :
-            verdict === "MERCHANT" ? "bg-amber-500" : "bg-purple-500"
-          }`}
+          className={`h-full rounded-full transition-all duration-1000 ease-out ${style.fill}`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -84,147 +142,169 @@ function ConfidenceBar({ confidence, verdict }) {
 export default function PipelineStream({ events, isResolving, totalElapsed }) {
   if (!isResolving && Object.keys(events).length === 0) {
     return (
-      <div className="flex items-center justify-center h-32 text-slate-600 text-sm">
-        Click "Resolve Dispute" to start the pipeline
-      </div>
+      <section>
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+          Resolution Pipeline
+        </h2>
+        <div className="rounded-lg border border-dashed border-line px-6 py-16 text-center">
+          <p className="text-[13px] font-medium text-ink">No active adjudication</p>
+          <p className="mt-1 text-xs text-muted">
+            Select a dispute case and choose Resolve Dispute to begin.
+          </p>
+        </div>
+      </section>
     );
   }
 
-  const stages = ["classified", "facts_extracted", "rules_fired", "verdict", "memo", "ledger"];
-  const completedStages = new Set(Object.keys(events));
-  const currentStageIdx = stages.findIndex((s) => !completedStages.has(s));
+  const completed = new Set(Object.keys(events));
+  const currentIdx = STAGES.findIndex((s) => !completed.has(s));
+  const verdictStyle =
+    VERDICT_STYLES[events.verdict?.verdict] || VERDICT_STYLES.ESCALATE_HUMAN_REVIEW;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+    <section>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
           Resolution Pipeline
         </h2>
         {totalElapsed && (
-          <span className="text-xs px-3 py-1 rounded-full bg-[#006FCF]/10 text-[#006FCF] font-semibold">
-            Resolved in {(totalElapsed / 1000).toFixed(1)}s
+          <span className="font-mono text-[11px] font-medium tabular-nums text-brand-accent">
+            Completed in {(totalElapsed / 1000).toFixed(1)}s
           </span>
         )}
       </div>
 
-      {/* Classification */}
-      <div className={`rounded-xl border p-4 transition-all duration-500 ${
-        events.classified ? "border-white/10 bg-[#14141f]" : "border-white/5 bg-[#14141f]/50"
-      }`}>
-        <StageHeader
+      <div className="space-y-2.5">
+        {/* 01 — Classification */}
+        <StageCard
           stage="classified"
-          isActive={isResolving && currentStageIdx === 0}
+          index={0}
+          isActive={isResolving && currentIdx === 0}
           isComplete={!!events.classified}
           elapsedMs={events.classified?.elapsed_ms}
-        />
-        {events.classified && (
-          <div className="ml-9 animate-in fade-in">
-            <div className="flex items-center gap-2">
-              <span className="text-xs px-2 py-1 rounded-md bg-[#006FCF]/20 text-[#006FCF] font-mono font-bold">
+        >
+          {events.classified && (
+            <div className="flex items-start gap-2.5">
+              <span className="shrink-0 rounded border border-brand-accent/30 bg-brand/12 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-brand-accent">
                 {events.classified.reason_code}
               </span>
-              <span className="text-sm text-slate-300">{events.classified.justification}</span>
+              <span className="text-[13px] leading-relaxed text-ink">
+                {events.classified.justification}
+              </span>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </StageCard>
 
-      {/* Facts Extracted */}
-      <div className={`rounded-xl border p-4 transition-all duration-500 ${
-        events.facts_extracted ? "border-white/10 bg-[#14141f]" : "border-white/5 bg-[#14141f]/50"
-      }`}>
-        <StageHeader
+        {/* 02 — Evidence analysis */}
+        <StageCard
           stage="facts_extracted"
-          isActive={isResolving && currentStageIdx === 1}
+          index={1}
+          isActive={isResolving && currentIdx === 1}
           isComplete={!!events.facts_extracted}
           elapsedMs={events.facts_extracted?.elapsed_ms}
-        />
-        {events.facts_extracted && (
-          <div className="ml-9 space-y-2 animate-in fade-in">
-            <div className="text-xs text-slate-500 mb-2">
-              {events.facts_extracted.atomic_facts?.length || 0} atomic +{" "}
-              {events.facts_extracted.derived_facts?.length || 0} derived facts
-            </div>
-            <div className="grid gap-1.5 max-h-48 overflow-y-auto pr-2">
-              {events.facts_extracted.atomic_facts?.map((f, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs">
-                  <span className="px-1.5 py-0.5 rounded bg-white/5 text-slate-500 font-mono shrink-0">
-                    {f.source_doc}
-                  </span>
-                  <span className="text-slate-400">{f.fact_type}:</span>
-                  <span className="text-slate-200 truncate">{JSON.stringify(f.value)}</span>
-                </div>
-              ))}
-              {events.facts_extracted.derived_facts?.map((f, i) => (
-                <div key={`d-${i}`} className="flex items-start gap-2 text-xs">
-                  <span className="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono shrink-0">
-                    DERIVED
-                  </span>
-                  <span className="text-slate-400">{f.fact_type}:</span>
-                  <span className="text-slate-200 truncate">{JSON.stringify(f.value)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+        >
+          {events.facts_extracted && (
+            <>
+              <div className="mb-2 text-[11px] text-muted">
+                {events.facts_extracted.atomic_facts?.length || 0} atomic ·{" "}
+                {events.facts_extracted.derived_facts?.length || 0} derived
+              </div>
+              <div className="max-h-52 space-y-1 overflow-y-auto pr-2">
+                {events.facts_extracted.atomic_facts?.map((f, i) => (
+                  <FactRow key={i} source={f.source_doc} type={f.fact_type} value={f.value} />
+                ))}
+                {events.facts_extracted.derived_facts?.map((f, i) => (
+                  <FactRow
+                    key={`d-${i}`}
+                    source="DERIVED"
+                    type={f.fact_type}
+                    value={f.value}
+                    emphasis
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </StageCard>
 
-      {/* Rules Fired */}
-      <div className={`rounded-xl border p-4 transition-all duration-500 ${
-        events.rules_fired ? "border-white/10 bg-[#14141f]" : "border-white/5 bg-[#14141f]/50"
-      }`}>
-        <StageHeader
+        {/* 03 — Rulebook */}
+        <StageCard
           stage="rules_fired"
-          isActive={isResolving && currentStageIdx === 2}
+          index={2}
+          isActive={isResolving && currentIdx === 2}
           isComplete={!!events.rules_fired}
           elapsedMs={events.rules_fired?.elapsed_ms}
-        />
-        {events.rules_fired && (
-          <div className="ml-9 space-y-2 animate-in fade-in">
-            {events.rules_fired.fired_rules?.map((r, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs">
-                <span className="font-mono text-slate-300 w-20">{r.rule_id}</span>
-                <span className={`font-mono font-bold w-14 text-right ${
-                  r.weight < 0 ? "text-amber-400" : "text-emerald-400"
-                }`}>
-                  {r.weight > 0 ? "+" : ""}{r.weight.toFixed(2)}
-                </span>
-                <span className="text-slate-500 truncate">{r.rulebook_text?.slice(0, 60)}</span>
-              </div>
-            ))}
-            {events.rules_fired.defeated_rules?.map((r, i) => (
-              <div key={`def-${i}`} className="flex items-center gap-2 text-xs opacity-60">
-                <span className="font-mono text-red-400 w-20 line-through">{r.rule_id}</span>
-                <span className="font-mono text-red-400/60 w-14 text-right line-through">
-                  {r.original_weight > 0 ? "+" : ""}{r.original_weight.toFixed(2)}
-                </span>
-                <span className="text-red-400/60 text-xs">DEFEATED</span>
-              </div>
-            ))}
+        >
+          {events.rules_fired && (
+            <div className="space-y-1">
+              {events.rules_fired.fired_rules?.map((r, i) => (
+                <div key={i} className="flex items-baseline gap-3 text-[11px]">
+                  <span className="w-20 shrink-0 font-mono font-medium text-ink">
+                    {r.rule_id}
+                  </span>
+                  <span
+                    className={`w-12 shrink-0 text-right font-mono font-semibold tabular-nums ${
+                      r.weight < 0 ? "text-negative" : "text-brand-accent"
+                    }`}
+                  >
+                    {r.weight > 0 ? "+" : ""}
+                    {r.weight.toFixed(2)}
+                  </span>
+                  <span className="truncate text-muted">{r.rulebook_text}</span>
+                </div>
+              ))}
+
+              {events.rules_fired.defeated_rules?.map((r, i) => (
+                <div key={`def-${i}`} className="flex items-baseline gap-3 text-[11px]">
+                  <span className="w-20 shrink-0 font-mono font-medium text-muted line-through">
+                    {r.rule_id}
+                  </span>
+                  <span className="w-12 shrink-0 text-right font-mono tabular-nums text-muted line-through">
+                    {r.original_weight > 0 ? "+" : ""}
+                    {r.original_weight.toFixed(2)}
+                  </span>
+                  <span className="font-medium uppercase tracking-wide text-negative">
+                    Defeated
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </StageCard>
+
+        {/* 04 — Verdict */}
+        {events.verdict && (
+          <div
+            className={`animate-in rounded-lg border p-6 transition-colors ${verdictStyle.panel}`}
+          >
+            <div className={`text-[11px] uppercase tracking-[0.12em] ${verdictStyle.sub}`}>
+              Reason Code {events.verdict.reason_code}
+            </div>
+            <div className="mt-1.5 text-xl font-semibold tracking-tight">
+              {verdictStyle.label}
+            </div>
+            <ConfidenceBar confidence={events.verdict.confidence} style={verdictStyle} />
           </div>
         )}
       </div>
+    </section>
+  );
+}
 
-      {/* Verdict */}
-      {events.verdict && (() => {
-        const style = VERDICT_STYLES[events.verdict.verdict] || VERDICT_STYLES.ESCALATE_HUMAN_REVIEW;
-        return (
-          <div className={`rounded-xl border p-6 transition-all duration-700 ${style.border} ${style.bg} ${style.glow}`}>
-            <div className="text-center">
-              <div className={`text-2xl font-bold mb-1 ${style.text}`}>
-                {style.label}
-              </div>
-              <div className="text-xs text-slate-500">
-                Reason Code {events.verdict.reason_code}
-              </div>
-              <ConfidenceBar
-                confidence={events.verdict.confidence}
-                verdict={events.verdict.verdict}
-              />
-            </div>
-          </div>
-        );
-      })()}
+function FactRow({ source, type, value, emphasis }) {
+  return (
+    <div className="flex items-baseline gap-2 text-[11px]">
+      <span
+        className={`shrink-0 rounded border px-1.5 py-px font-mono text-[10px] ${
+          emphasis
+            ? "border-brand-accent/30 bg-brand/12 font-semibold text-brand-accent"
+            : "border-line bg-elevated text-muted"
+        }`}
+      >
+        {source}
+      </span>
+      <span className="shrink-0 text-muted">{type}</span>
+      <span className="truncate font-mono text-ink">{JSON.stringify(value)}</span>
     </div>
   );
 }
