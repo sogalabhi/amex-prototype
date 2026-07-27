@@ -1,3 +1,5 @@
+import React from "react";
+
 const STAGES = ["classified", "facts_extracted", "rules_fired", "verdict", "memo", "ledger"];
 
 const STAGE_LABELS = {
@@ -9,8 +11,6 @@ const STAGE_LABELS = {
   ledger: "Audit Trail",
 };
 
-// Outcome is encoded by fill weight rather than hue: the cardmember result carries
-// solid Amex blue, the merchant result a deep navy, and an escalation stays unfilled.
 const VERDICT_STYLES = {
   CARDMEMBER: {
     label: "Resolved in Favor of Cardmember",
@@ -34,11 +34,11 @@ const VERDICT_STYLES = {
     fill: "bg-muted",
   },
   NOT_CHARGEABLE_UNDER_CODE: {
-    bg: "bg-teal-500/10",
-    border: "border-teal-500/30",
-    text: "text-teal-400",
-    label: "NOT CHARGEABLE UNDER CODE 4512",
-    glow: "shadow-[0_0_30px_rgba(20,184,166,0.2)]",
+    label: "Not Chargeable Under Code 4512",
+    panel: "border-teal-500/40 bg-teal-950/40 text-teal-200",
+    sub: "text-teal-400/80",
+    track: "bg-teal-500/20",
+    fill: "bg-teal-400",
   },
 };
 
@@ -59,6 +59,20 @@ function Spinner() {
         fill="none"
       />
       <path fill="currentColor" d="M4 12a8 8 0 018-8V1C5.925 1 1 5.925 1 12h3z" />
+    </svg>
+  );
+}
+
+function Check() {
+  return (
+    <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path
+        d="M2.5 6.2l2.3 2.3L9.5 3.8"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -95,20 +109,6 @@ function StageHeader({ stage, index, isActive, isComplete, elapsedMs }) {
   );
 }
 
-function Check() {
-  return (
-    <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <path
-        d="M2.5 6.2l2.3 2.3L9.5 3.8"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function StageCard({ stage, index, isActive, isComplete, elapsedMs, children }) {
   return (
     <div
@@ -124,6 +124,24 @@ function StageCard({ stage, index, isActive, isComplete, elapsedMs, children }) 
         elapsedMs={elapsedMs}
       />
       {children && <div className="animate-in mt-3 pl-9">{children}</div>}
+    </div>
+  );
+}
+
+function FactRow({ source, type, value, emphasis }) {
+  return (
+    <div className="flex items-baseline gap-2 text-xs">
+      <span
+        className={`shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] ${
+          emphasis
+            ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold"
+            : "bg-white/5 text-slate-400 border border-white/5"
+        }`}
+      >
+        {source}
+      </span>
+      <span className="shrink-0 text-slate-400 font-medium">{type}:</span>
+      <span className="truncate font-mono text-slate-200">{JSON.stringify(value)}</span>
     </div>
   );
 }
@@ -234,7 +252,7 @@ export default function PipelineStream({ events, isResolving, totalElapsed }) {
           )}
         </StageCard>
 
-        {/* 03 — Rulebook */}
+        {/* 03 — Rulebook Engine */}
         <StageCard
           stage="rules_fired"
           index={2}
@@ -290,29 +308,15 @@ export default function PipelineStream({ events, isResolving, totalElapsed }) {
             <div className="mt-1.5 text-xl font-semibold tracking-tight">
               {verdictStyle.label}
             </div>
+            {events.verdict.exclusion_applied && (
+              <div className="my-2 p-2 rounded bg-teal-500/10 border border-teal-500/30 text-xs text-teal-300 font-mono">
+                🚫 Exclusion Applied: {events.verdict.exclusion_applied.rulebook_text}
+              </div>
+            )}
             <ConfidenceBar confidence={events.verdict.confidence} style={verdictStyle} />
           </div>
         )}
       </div>
     </section>
-  );
-}
-
-
-function FactRow({ source, type, value, emphasis }) {
-  return (
-    <div className="flex items-baseline gap-2 text-xs">
-      <span
-        className={`shrink-0 px-1.5 py-0.5 rounded font-mono text-[10px] ${
-          emphasis
-            ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold"
-            : "bg-white/5 text-slate-400 border border-white/5"
-        }`}
-      >
-        {source}
-      </span>
-      <span className="shrink-0 text-slate-400 font-medium">{type}:</span>
-      <span className="truncate font-mono text-slate-200">{JSON.stringify(value)}</span>
-    </div>
   );
 }
