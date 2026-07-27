@@ -56,7 +56,8 @@ export default function DecisionMemo({ memoData }) {
 
 // Renders the memo's light markdown: `## headings` become section labels and
 // `**bold**` spans are emphasised against the body text.
-function renderMemo(text) {
+function renderMemo(rawText) {
+  const text = typeof rawText === "string" ? rawText : (rawText ? JSON.stringify(rawText, null, 2) : "");
   return text
     .split(/\n{2,}/)
     .filter((block) => block.trim())
@@ -80,7 +81,8 @@ function renderMemo(text) {
     });
 }
 
-function renderInline(text) {
+function renderInline(rawText) {
+  const text = typeof rawText === "string" ? rawText : (rawText ? String(rawText) : "");
   return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
     part.startsWith("**") && part.endsWith("**") ? (
       <strong key={i} className="font-semibold text-ink">
