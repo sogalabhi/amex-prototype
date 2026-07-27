@@ -6,7 +6,7 @@ Verdict Chain is an autonomous Amex chargeback adjudication platform combining d
 
 <img width="350" height="900" alt="image" src="https://github.com/user-attachments/assets/29f2eca6-b760-43d1-a70b-577821e91af3" />
 
-<img width="5338" height="1936" alt="image" src="https://github.com/user-attachments/assets/a82cf633-bfc0-4852-bff5-3a51734ca899" />
+<img width="2880" height="1554" alt="image" src="https://github.com/user-attachments/assets/4409095e-d17b-4cba-84f9-fc20d2f33af8" />
 
 ## Architecture
 
