@@ -32,14 +32,14 @@ An AI adjudicator with a tamper-evident reasoning ledger, built on American Expr
 
 ---
 
-## Slide 2 — The Problem & Why It's Hard
+## Slide 2 — The Problem & Friendly Fraud Scale
 
-### **Disputes are slow, expensive, and opaque — and naive AI fails the trust test**
+### **Disputes are slow, expensive, and opaque — driven by massive friendly fraud**
 
+- **Friendly Fraud Scale:** Nearly **79%** of 2025 disputes were friendly fraud — valid purchases reversed instead of requesting a refund. **1 in 5 consumers** admit to committing friendly fraud, and first-party fraud now accounts for **36%** of all global fraud cases, more than doubling in a single year. *(Sources: Chargebacks911, 2025; Merchant Risk Council)*
 - **Slow & Expensive:** Disputes take **30–90 days** (75–120 for complex cases). FIs spend **$9.08–$10.32** per dispute in ops labor, hiring 1 FTE per **$13,000–$14,000** of annual disputes. Merchant all-in cost averages **$110 per dispute**. *(Source: Mastercard / Datos Insights, 2025)*
 - **Opaque Outcomes:** Merchant representment win rate averages **20%** — outcomes track evidence-submission capacity, not merits. *(Source: Chargebacks911, 2025)*
 - **Market Scale:** **261M** chargebacks in 2025 $\rightarrow$ **324M** by 2028. Total financial impact growing from **$36.9B in 2026** to **$46.1B in 2029**. *(Source: Mastercard / Datos Insights, 2025)*
-- **Why Naive AI Fails:** Adversarial parties distrust black-box AI decisions. Unstructured evidence (chat logs, tracking PDFs) arrives contradictory. Decisions must be legally defensible against 24 published network reason codes, not a generative model's opinion.
 
 ---
 
@@ -50,7 +50,7 @@ An AI adjudicator with a tamper-evident reasoning ledger, built on American Expr
 Verdict Chain ingests a disputed charge, parses evidence into structured facts carrying source provenance, applies deterministic rules encoded from American Express's published chargeback guide, renders a verdict with a plain-language memo, and commits a hash of every step to an EVM ledger.
 
 ### Five Core Pillars:
-- **Triage Before Adjudication (Roadmap):** Pre-adjudication routing to merchant remedy where one exists.
+- **Stage 0 Pre-Dispute Triage (Roadmap):** Diverts friendly fraud before formal adjudication by routing eligible claims back to merchant remedy (return window, store credit, replacement) — saving $9–$10 issuer cost before a single AI call is made.
 - **Auto-Gather & Parse:** Evidence $\rightarrow$ structured facts with source span provenance.
 - **Fair Weighing:** Rules from the Amex guide, weighted, with defeater logic.
 - **Transparent Reasoning:** Dual decision memos cite fact IDs and verbatim rulebook text.
